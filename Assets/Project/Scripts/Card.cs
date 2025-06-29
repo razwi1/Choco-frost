@@ -3,6 +3,7 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
     public string cardId;
+    public AudioClip CardFlip_Aud;
     public bool IsMatched { get; private set; }
     public bool IsFlipped { get; private set; }
 
@@ -44,6 +45,7 @@ public class Card : MonoBehaviour
         IsFlipped = showFront;
         frontObject.SetActive(showFront);
         backObject.SetActive(!showFront);
+        GameManager.Instance?.PlaySound(CardFlip_Aud);
     }
 
     public void Match()

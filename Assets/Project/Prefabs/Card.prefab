@@ -73,9 +73,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8088a9b988fe244eaf3bf66d35e7dbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardId: 0
+  CardFlip_Aud: {fileID: 8300000, guid: b34f9ad57c929404ab9b190c5953614e, type: 3}
   frontObject: {fileID: 5946158433451816527}
   backObject: {fileID: 1867713709905019789}
-  cardId: 0
 --- !u!1 &1867713709905019789
 GameObject:
   m_ObjectHideFlags: 0

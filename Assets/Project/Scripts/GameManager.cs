@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
         if (availableTurns <= 0 && pairsRemaining > 0)
         {
             UnityEngine.Debug.Log("❌ You ran out of turns. Game Over!");
+            PlaySound(Fail_Aud);
             Fail.SetActive(true);
             GridManager.Instance.ClearGrid();
             yield break; // Stops further logic
@@ -86,6 +87,7 @@ public class GameManager : MonoBehaviour
         {
             firstCard.Match();
             secondCard.Match();
+            PlaySound(Match_Aud);
             score += 50;
             scoretxt.text = $"{score}";
             pairsRemaining--;
@@ -93,6 +95,7 @@ public class GameManager : MonoBehaviour
             if (pairsRemaining == 0)
             {
                UnityEngine.Debug.Log($"🎉 You Win! Score: {score}, Turns: {turnsUsed}");
+                PlaySound(win_Aud);
                 Win.SetActive(true);
             }
         }
@@ -114,4 +117,22 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+    public AudioSource audioSource;
+    public AudioClip click_Aud;
+    public AudioClip win_Aud;
+    public AudioClip Fail_Aud;
+    public AudioClip Match_Aud;
+
+    public void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+    }
+
+    public void click_audio()
+    {
+        PlaySound(click_Aud);
+    }
 }
