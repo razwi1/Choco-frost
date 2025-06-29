@@ -101,4 +101,11 @@ public class GameManager : MonoBehaviour
         canSelect = true;
         GridManager.Instance.canInteract = true;
     }
+
+    public void QuitGame()
+    {
+        UnityEngine.Debug.Log("Quitting the game...");
+        Application.Quit();
+    }
+
 }

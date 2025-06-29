@@ -27,10 +27,10 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
-        SetupLevel(currentLevel);
+        //SetupLevel(currentLevel);
     }
 
-    void SetupLevel(int level)
+    public void SetupLevel(int level)
     {
         // Set grid size
         (rows, cols) = level switch
@@ -146,4 +146,17 @@ public class GridManager : MonoBehaviour
 
         canInteract = true;
     }
+
+    public void ClearGrid()
+    {
+        foreach (var card in cards)
+        {
+            if (card != null)
+                Destroy(card.gameObject);
+        }
+
+        cards.Clear();
+        canInteract = false;
+    }
+
 }
