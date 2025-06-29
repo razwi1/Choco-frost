@@ -73,7 +73,8 @@ public class GameManager : MonoBehaviour
         turnsUsed++;
         availableTurns--;
         availabletxt.text = $"{availableTurns}";
-        if (availableTurns <= 0 && pairsRemaining > 0)
+        UnityEngine.Debug.Log(pairsRemaining);
+        if (availableTurns < -1 && pairsRemaining > 0)
         {
             UnityEngine.Debug.Log("❌ You ran out of turns. Game Over!");
             PlaySound(Fail_Aud);
