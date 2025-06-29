@@ -179,6 +179,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d6be7dcf53886a546a0c9a8e15045bde, type: 3}
   - {fileID: 21300000, guid: a19420f425f71734788474106077bf80, type: 3}
   - {fileID: 21300000, guid: 2f56199be3e1ec247922a186d87d85c0, type: 3}
+  - {fileID: 21300000, guid: 558aaf4a10e0c2a4cb98295db1fc54ef, type: 3}
+  - {fileID: 21300000, guid: 05e75dd24587f0a4798794a2cb9eb06c, type: 3}
+  - {fileID: 21300000, guid: f1e33d04ca74922428f15d6143eea7e0, type: 3}
+  - {fileID: 21300000, guid: b4b7e9810eaa4af43a85ea20e93fd44f, type: 3}
+  - {fileID: 21300000, guid: f35f4c6137bb7884bb260f5bb1b94f07, type: 3}
   cardBackSprite: {fileID: 21300000, guid: 6c4b77756541665479301ba5cfedad51, type: 3}
   Credits: {fileID: 1327038658}
   canInteract: 0
@@ -1171,6 +1176,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1327038658}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &431236063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1459,6 +1476,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: click_audio
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1327038658}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

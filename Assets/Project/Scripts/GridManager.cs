@@ -173,7 +173,7 @@ public class GridManager : MonoBehaviour
     public void Next_Level()
     {
        ClearGrid();
-       if(currentLevel <= 3)
+       if(currentLevel < 3)
         {
             currentLevel++;
             SetupLevel(currentLevel);
