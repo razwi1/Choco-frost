@@ -2,32 +2,53 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    public SpriteRenderer frontRenderer;
-    public SpriteRenderer backRenderer;
+    public string cardId;
+    public bool IsMatched { get; private set; }
+    public bool IsFlipped { get; private set; }
 
-    private Sprite frontSprite;
-    private bool isFlipped = false;
-    private int cardId;
+    [SerializeField] private GameObject frontObject; // child object for front
+    [SerializeField] private GameObject backObject;  // child object for back
 
-    public void SetCard(Sprite front, Sprite back, int id)
+    private SpriteRenderer frontRenderer;
+    private SpriteRenderer backRenderer;
+
+    void Awake()
     {
-        frontSprite = front;
+        // Get SpriteRenderers on the child objects
+        frontRenderer = frontObject.GetComponent<SpriteRenderer>();
+        backRenderer = backObject.GetComponent<SpriteRenderer>();
+    }
+
+    public void SetCard(Sprite front, Sprite back, string name)
+    {
+        cardId = name; // Card ID for matching logic
+        IsMatched = false;
+
+        // Assign sprite images
         frontRenderer.sprite = front;
         backRenderer.sprite = back;
-        cardId = id;
 
-        Flip(false); // Default to back
+        Flip(false); // Start face-down
     }
 
     void OnMouseDown()
     {
-        Flip(!isFlipped); // Flip on click
+        if (!IsMatched && !IsFlipped && GridManager.Instance.canInteract)
+        {
+            GameManager.Instance?.CardSelected(this);
+        }
     }
 
     public void Flip(bool showFront)
     {
-        isFlipped = showFront;
-        frontRenderer.gameObject.SetActive(showFront);
-        backRenderer.gameObject.SetActive(!showFront);
+        IsFlipped = showFront;
+        frontObject.SetActive(showFront);
+        backObject.SetActive(!showFront);
+    }
+
+    public void Match()
+    {
+        IsMatched = true;
+        gameObject.SetActive(false);
     }
 }

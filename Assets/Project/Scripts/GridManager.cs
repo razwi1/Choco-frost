@@ -16,6 +16,15 @@ public class GridManager : MonoBehaviour
 
     private List<Card> cards = new List<Card>();
 
+    public static GridManager Instance { get; private set; }
+    public bool canInteract = false;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
+    }
+
     void Start()
     {
         SetupLevel(currentLevel);
@@ -23,84 +32,76 @@ public class GridManager : MonoBehaviour
 
     void SetupLevel(int level)
     {
-        switch (level)
+        // Set grid size
+        (rows, cols) = level switch
         {
-            case 1: rows = 2; cols = 2; break;
-            case 2: rows = 4; cols = 4; break;
-            case 3: rows = 5; cols = 6; break;
-            default: rows = 2; cols = 2; break;
-        }
+            1 => (2, 2),
+            2 => (4, 4),
+            3 => (5, 6),
+            _ => (2, 2)
+        };
 
         totalCards = rows * cols;
         numPairs = totalCards / 2;
 
-        if (cardFrontSprites == null || cardFrontSprites.Length == 0)
+        if (cardFrontSprites == null || cardFrontSprites.Length < numPairs)
         {
-            Debug.LogError("Card front sprites not assigned in the inspector!");
+            Debug.LogError("Not enough card front sprites assigned!");
             return;
         }
 
         GenerateGrid();
+
+        GameManager.Instance?.InitializeGame(numPairs);
+
         StartCoroutine(PreviewAndHideCards());
     }
 
     void GenerateGrid()
     {
-        // Clear old cards
-        foreach (var c in cards) Destroy(c.gameObject);
+        // Clear previous cards
+        foreach (var c in cards)
+            Destroy(c.gameObject);
         cards.Clear();
 
-        // Create and shuffle card pairs
-        List<Sprite> selected = new List<Sprite>();
+        // Prepare card pairs and shuffle
+        List<Sprite> selectedSprites = new List<Sprite>();
         for (int i = 0; i < numPairs; i++)
         {
-            Sprite s = cardFrontSprites[i % cardFrontSprites.Length];
-            selected.Add(s);
-            selected.Add(s);
+            Sprite s = cardFrontSprites[i];
+            selectedSprites.Add(s);
+            selectedSprites.Add(s);
         }
 
-        for (int i = 0; i < selected.Count; i++)
+        for (int i = 0; i < selectedSprites.Count; i++)
         {
-            Sprite temp = selected[i];
-            int rand = Random.Range(i, selected.Count);
-            selected[i] = selected[rand];
-            selected[rand] = temp;
+            Sprite temp = selectedSprites[i];
+            int rand = Random.Range(i, selectedSprites.Count);
+            selectedSprites[i] = selectedSprites[rand];
+            selectedSprites[rand] = temp;
         }
 
-        // Get card size using sample sprite
+        // Calculate layout
         Sprite sampleSprite = cardFrontSprites[0];
-        if (sampleSprite == null)
-        {
-            Debug.LogError("First card sprite is missing!");
-            return;
-        }
+        Vector2 cardSize = sampleSprite.bounds.size;
+        float spacingFactor = 0.2f;
 
-        Vector2 cardOriginalSize = sampleSprite.bounds.size;
-
-        float spacingFactor = 0.2f; // 20% of card size
-        float spacingX = cardOriginalSize.x * spacingFactor;
-        float spacingY = cardOriginalSize.y * spacingFactor;
-
-        // Calculate screen dimensions with padding
         float screenHeight = Camera.main.orthographicSize * 2f;
         float screenWidth = screenHeight * Camera.main.aspect;
-        float screenPaddingFactor = 0.9f; // 90% of screen space for grid
-        screenWidth *= screenPaddingFactor;
-        screenHeight *= screenPaddingFactor;
+        float screenPadding = 0.9f;
 
-        // Total unscaled grid size
-        float totalWidth = cols * cardOriginalSize.x + (cols - 1) * spacingX;
-        float totalHeight = rows * cardOriginalSize.y + (rows - 1) * spacingY;
+        float totalWidth = cols * cardSize.x + (cols - 1) * cardSize.x * spacingFactor;
+        float totalHeight = rows * cardSize.y + (rows - 1) * cardSize.y * spacingFactor;
 
-        // Uniform scaling factor
-        float scaleX = screenWidth / totalWidth;
-        float scaleY = screenHeight / totalHeight;
-        float uniformScale = Mathf.Min(scaleX, scaleY, 1f);
+        float uniformScale = Mathf.Min(
+            (screenWidth * screenPadding) / totalWidth,
+            (screenHeight * screenPadding) / totalHeight,
+            1f
+        );
 
-        // Apply scaling to card and spacing
-        Vector2 scaledCardSize = cardOriginalSize * uniformScale;
-        spacingX = scaledCardSize.x * spacingFactor;
-        spacingY = scaledCardSize.y * spacingFactor;
+        Vector2 scaledCardSize = cardSize * uniformScale;
+        float spacingX = scaledCardSize.x * spacingFactor;
+        float spacingY = scaledCardSize.y * spacingFactor;
 
         float gridWidth = cols * scaledCardSize.x + (cols - 1) * spacingX;
         float gridHeight = rows * scaledCardSize.y + (rows - 1) * spacingY;
@@ -110,6 +111,7 @@ public class GridManager : MonoBehaviour
             gridHeight / 2f - scaledCardSize.y / 2f
         );
 
+        // Instantiate cards
         for (int i = 0; i < totalCards; i++)
         {
             int row = i / cols;
@@ -120,27 +122,26 @@ public class GridManager : MonoBehaviour
                 startPos.y - row * (scaledCardSize.y + spacingY)
             );
 
-            GameObject card = Instantiate(cardPrefab, pos, Quaternion.identity, transform);
-            card.transform.localScale = Vector3.one * uniformScale;
+            GameObject cardGO = Instantiate(cardPrefab, pos, Quaternion.identity, transform);
+            cardGO.transform.localScale = Vector3.one * uniformScale;
 
-            Card cardComp = card.GetComponent<Card>();
-            cardComp.SetCard(selected[i], cardBackSprite, i);
-            cards.Add(cardComp);
+            Card card = cardGO.GetComponent<Card>();
+
+            card.SetCard(selectedSprites[i], cardBackSprite, selectedSprites[i].name);
+            cards.Add(card);
         }
     }
 
     IEnumerator PreviewAndHideCards()
     {
-        foreach (var c in cards)
-        {
-            c.Flip(true);
-        }
+        foreach (var card in cards)
+            card.Flip(true);
 
         yield return new WaitForSeconds(2f);
 
-        foreach (var c in cards)
-        {
-            c.Flip(false);
-        }
+        foreach (var card in cards)
+            card.Flip(false);
+
+        canInteract = true;
     }
 }
