@@ -7,7 +7,7 @@ public class GridManager : MonoBehaviour
     [Header("Grid Settings")]
     public int currentLevel = 1; // 1: 2x2, 2: 4x4, 3: 5x6
     private int rows, cols;
-    private int totalCards, numPairs;
+    private int totalCards, numPairs, availableturns;
 
     [Header("Card Settings")]
     public GameObject cardPrefab;
@@ -43,6 +43,8 @@ public class GridManager : MonoBehaviour
 
         totalCards = rows * cols;
         numPairs = totalCards / 2;
+        availableturns = totalCards;
+        GameManager.Instance?.SetAvailableTurns(availableturns);
 
         if (cardFrontSprites == null || cardFrontSprites.Length < numPairs)
         {

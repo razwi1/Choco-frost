@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,10 +9,21 @@ public class GameManager : MonoBehaviour
 
     private Card firstCard, secondCard;
     private bool canSelect = false;
+    public TMP_Text scoretxt;
+    public TMP_Text availabletxt;
 
     private int turnsUsed = 0;
     private int score = 0;
     private int pairsRemaining = 0;
+
+    public int availableTurns { get; private set; }
+
+    public void SetAvailableTurns(int turns)
+    {
+        availableTurns = turns;
+        availabletxt.text = $"{availableTurns}";
+    }
+
 
     private void Awake()
     {
@@ -54,6 +66,14 @@ public class GameManager : MonoBehaviour
     IEnumerator CheckMatch()
     {
         turnsUsed++;
+        availableTurns--;
+        availabletxt.text = $"{availableTurns}";
+        if (availableTurns <= 0 && pairsRemaining > 0)
+        {
+            UnityEngine.Debug.Log("❌ You ran out of turns. Game Over!");
+            // TODO: Trigger lose screen, restart option, etc.
+            yield break; // Stops further logic
+        }
         yield return new WaitForSeconds(0.5f);
 
         if (firstCard.cardId == secondCard.cardId)
@@ -61,6 +81,7 @@ public class GameManager : MonoBehaviour
             firstCard.Match();
             secondCard.Match();
             score += 50;
+            scoretxt.text = $"{score}";
             pairsRemaining--;
 
             if (pairsRemaining == 0)
