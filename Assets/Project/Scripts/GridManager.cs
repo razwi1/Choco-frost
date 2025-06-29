@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
     [Header("Grid Settings")]
-    public int currentLevel = 1; // 1: 2x2, 2: 4x4, 3: 5x6
+    private int currentLevel; // 1: 2x2, 2: 4x4, 3: 5x6
     private int rows, cols;
     private int totalCards, numPairs, availableturns;
 
@@ -13,6 +14,8 @@ public class GridManager : MonoBehaviour
     public GameObject cardPrefab;
     public Sprite[] cardFrontSprites;
     public Sprite cardBackSprite;
+
+    public GameObject Credits;
 
     private List<Card> cards = new List<Card>();
 
@@ -32,6 +35,7 @@ public class GridManager : MonoBehaviour
 
     public void SetupLevel(int level)
     {
+        currentLevel = level;
         // Set grid size
         (rows, cols) = level switch
         {
@@ -48,7 +52,7 @@ public class GridManager : MonoBehaviour
 
         if (cardFrontSprites == null || cardFrontSprites.Length < numPairs)
         {
-            Debug.LogError("Not enough card front sprites assigned!");
+            UnityEngine.Debug.LogError("Not enough card front sprites assigned!");
             return;
         }
 
@@ -57,6 +61,7 @@ public class GridManager : MonoBehaviour
         GameManager.Instance?.InitializeGame(numPairs);
 
         StartCoroutine(PreviewAndHideCards());
+        
     }
 
     void GenerateGrid()
@@ -132,6 +137,7 @@ public class GridManager : MonoBehaviour
             card.SetCard(selectedSprites[i], cardBackSprite, selectedSprites[i].name);
             cards.Add(card);
         }
+       
     }
 
     IEnumerator PreviewAndHideCards()
@@ -159,4 +165,22 @@ public class GridManager : MonoBehaviour
         canInteract = false;
     }
 
+    public void retry()
+    {
+        SetupLevel(currentLevel);
+    }
+
+    public void Next_Level()
+    {
+       ClearGrid();
+       if(currentLevel <= 3)
+        {
+            currentLevel++;
+            SetupLevel(currentLevel);
+        }
+        else
+        {
+            Credits.SetActive(true);
+        }
+    }
 }

@@ -16,12 +16,17 @@ public class GameManager : MonoBehaviour
     private int score = 0;
     private int pairsRemaining = 0;
 
+    public GameObject Win;
+    public GameObject Fail;
+
     public int availableTurns { get; private set; }
 
     public void SetAvailableTurns(int turns)
     {
         availableTurns = turns;
         availabletxt.text = $"{availableTurns}";
+        score = 0;
+        scoretxt.text = $"{score}";
     }
 
 
@@ -71,7 +76,8 @@ public class GameManager : MonoBehaviour
         if (availableTurns <= 0 && pairsRemaining > 0)
         {
             UnityEngine.Debug.Log("❌ You ran out of turns. Game Over!");
-            // TODO: Trigger lose screen, restart option, etc.
+            Fail.SetActive(true);
+            GridManager.Instance.ClearGrid();
             yield break; // Stops further logic
         }
         yield return new WaitForSeconds(0.5f);
@@ -87,7 +93,7 @@ public class GameManager : MonoBehaviour
             if (pairsRemaining == 0)
             {
                UnityEngine.Debug.Log($"🎉 You Win! Score: {score}, Turns: {turnsUsed}");
-                // TODO: Display win screen or restart UI
+                Win.SetActive(true);
             }
         }
         else
