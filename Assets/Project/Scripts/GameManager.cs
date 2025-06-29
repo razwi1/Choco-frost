@@ -58,6 +58,15 @@ public class GameManager : MonoBehaviour
         if (firstCard == null)
         {
             firstCard = selectedCard;
+            if (availableTurns <= 0 && pairsRemaining > 0)
+            {
+                UnityEngine.Debug.Log("❌ You ran out of turns. Game Over!");
+                PlaySound(Fail_Aud);
+                Fail.SetActive(true);
+                GridManager.Instance.ClearGrid();
+                //yield break; // Stops further logic
+            }
+
         }
         else
         {
@@ -74,14 +83,7 @@ public class GameManager : MonoBehaviour
         availableTurns--;
         availabletxt.text = $"{availableTurns}";
         UnityEngine.Debug.Log(pairsRemaining);
-        if (availableTurns < 0 && pairsRemaining > 0)
-        {
-            UnityEngine.Debug.Log("❌ You ran out of turns. Game Over!");
-            PlaySound(Fail_Aud);
-            Fail.SetActive(true);
-            GridManager.Instance.ClearGrid();
-            yield break; // Stops further logic
-        }
+        
         yield return new WaitForSeconds(0.5f);
 
         if (firstCard.cardId == secondCard.cardId)
@@ -105,7 +107,6 @@ public class GameManager : MonoBehaviour
             firstCard.Flip(false);
             secondCard.Flip(false);
         }
-
         firstCard = null;
         secondCard = null;
         canSelect = true;
